@@ -6,8 +6,9 @@
 
     int Station::id_generator = 0;
 
+
     Station::Station(const std::string& record)
-    : id(0), m_serialNumber(0), m_quantity(0) {
+    : id(0), m_serialNumber(0), m_quantity(0), m_price(0), m_isDiscounted(false) {
         Utilities util;
         size_t next_pos = 0;
         bool more = true;
@@ -29,6 +30,13 @@
 
             if (more) {
                 m_quantity = std::stoi(util.extractToken(record, next_pos, more));
+            }
+            if (more) {
+                m_price = std::stoi(util.extractToken(record, next_pos, more));
+            }
+
+            if (more) {
+                m_isDiscounted = std::stoi(util.extractToken(record, next_pos, more));
             }
 
             if (m_widthField < util.getFieldWidth()) {
@@ -57,6 +65,13 @@
         if (m_quantity > 0) {
             --m_quantity;
         }
+    }
+    double Station::getPrice() const {
+        return m_price;
+    }
+
+    bool Station::isDiscounted() const {
+        return m_isDiscounted;
     }
 
     void Station::display(std::ostream& os, bool full) const {

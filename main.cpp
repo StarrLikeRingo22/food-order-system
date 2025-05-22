@@ -1,13 +1,24 @@
 #include <iostream>
+#include <iomanip>
 #include <vector>
 #include "MenuItem.h"
 #include "Utilities.h"
+
+
+    extern const double g_taxrate = 0.13; // 13 percent tax
+    extern const double g_discount = 0.10; //10 percent disc.
 
 void showMenu(const std::vector<MenuItem>& menu) {
     std::cout << "\nMenu:\n";
     for (size_t i = 0; i < menu.size(); ++i) {
         std::cout << i + 1 << ". ";
         menu[i].display(std::cout, false);
+
+        double taxedPrice = menu[i].getPrice() * (1.0 + g_taxrate);
+        if (menu[i].isDiscounted()) {
+            taxedPrice -= taxedPrice * g_discount;
+        }
+        std::cout << "   Price: $" << std::fixed << std::setprecision(2) << taxedPrice << '\n';
     }
     std::cout << "0. Checkout\n";
 }
@@ -16,11 +27,16 @@ int main() {
     Utilities::setDelimiter(',');
 
     std::vector<MenuItem> menu = {
-        MenuItem("Burger,10,1001"),
-        MenuItem("Fries,20,1002"),
-        MenuItem("Soda,15,1003"),
-        MenuItem("Pizza,8,1004"),
-        MenuItem("Salad,5,1005")
+    MenuItem("Big Mac,10,1001,5.99,1"),
+    MenuItem("McChicken,15,1002,4.49,0"),
+    MenuItem("Filet-O-Fish,12,1003,4.79,0"),
+    MenuItem("Quarter Pounder,8,1004,6.29,1"),
+    MenuItem("McNuggets (10 pcs),20,1005,5.39,0"),
+    MenuItem("Fries (Large),25,1006,2.99,0"),
+    MenuItem("Coca-Cola (Large),30,1007,1.89,1"),
+    MenuItem("Apple Pie,18,1008,1.29,0"),
+    MenuItem("McFlurry Oreo,10,1009,3.49,0"),
+    MenuItem("Double Cheeseburger,9,1010,4.19,1")
     };
 
     std::vector<int> order(menu.size(), 0);
@@ -68,10 +84,23 @@ int main() {
 
     std::cout << "\n=== Your Order ===\n";
     bool empty = true;
+    double grandTotal = 0.0;
+
+
     for (size_t i = 0; i < order.size(); ++i) {
         if (order[i] > 0) {
-            std::cout << order[i] << " x " << menu[i].getName() << '\n';
+           // std::cout << order[i] << " x " << menu[i].getName() << '\n';
             empty = false;
+            double basePrice = menu[i].getPrice() * order[i];
+            double taxAmount = basePrice * g_taxrate;
+            double discountAmount = menu[i].isDiscounted() ? (basePrice * g_discount) : 0.0;
+            double total = basePrice + taxAmount - discountAmount;
+            std::cout << order[i] << " x " << menu[i].getName()
+                << " | Base: $" << basePrice
+                << " | Tax: $" << taxAmount
+                << (menu[i].isDiscounted() ? " | Discount: -$" + std::to_string(discountAmount) : "")
+                << " | Total: $" << total
+                << '\n';
         }
     }
     if (empty)

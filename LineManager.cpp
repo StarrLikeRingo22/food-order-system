@@ -5,7 +5,6 @@
 #include <fstream>
 #include <algorithm>
 
-namespace seneca {
     LineManager::LineManager(const std::string &file, const std::vector<Workstation *> &stations) {
         try {
             std::ifstream input(file);
@@ -101,4 +100,3 @@ namespace seneca {
             station->display(os);
         }
     }
-}

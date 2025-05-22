@@ -3,8 +3,9 @@
 
 #include <string>
 #include <iostream>
+#include "Station.h"
 
-class MenuItem {
+class MenuItem : public Station {
     std::string m_name;
     size_t m_serial;
     size_t m_quantity;
@@ -14,6 +15,8 @@ public:
     size_t getQuantity() const;
     size_t getNextSerial();
     void updateQuantity();
+    double getPrice() const;
+    bool isDiscounted() const;
     void display(std::ostream& os, bool full) const;
 };
 
